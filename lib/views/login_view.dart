@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:developer' show log;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +60,9 @@ class _LoginViewState extends State<LoginView> {
                       email: email,
                       password: password,
                     );
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil('/notes/', (route) => false);
                 log("User login: ${userCredential.user}");
               } on FirebaseAuthException catch (e) {
                 log("Error: $e");
