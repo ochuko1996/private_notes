@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "201404011086",
+    "project_id": "oc-notes",
+    "storage_bucket": "oc-notes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201404011086:android:792f31951d89b4bc73e91f",
+        "android_client_info": {
+          "package_name": "com.example.privatenotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTI2aap5hOSyKziG66D0NTfdWNc5_e47Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
