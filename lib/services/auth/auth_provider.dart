@@ -1,6 +1,7 @@
 import 'package:privatenotes/services/auth/auth_user.dart';
 
 abstract class CustomAuthProvider {
+  Future<void> initialize();
   AuthUser? get currentUser;
 
   Future<AuthUser> logIn({required String email, required String password});

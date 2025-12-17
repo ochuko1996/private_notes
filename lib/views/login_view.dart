@@ -1,8 +1,7 @@
-import 'dart:developer' show log;
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:privatenotes/constant/route.dart';
+import 'package:privatenotes/services/auth/auth_exceptions.dart';
+import 'package:privatenotes/services/auth/auth_service.dart';
 import 'package:privatenotes/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -57,13 +56,13 @@ class _LoginViewState extends State<LoginView> {
               final password = _password.text;
 
               try {
-                final userCredential = await FirebaseAuth.instance
-                    .signInWithEmailAndPassword(
-                      email: email,
-                      password: password,
-                    );
-                final user = FirebaseAuth.instance.currentUser;
-                if ((user?.emailVerified ?? false)) {
+                await AuthService.firebase().logIn(
+                  email: email,
+                  password: password,
+                );
+
+                final user = AuthService.firebase().currentUser;
+                if ((user?.isEmailVerified ?? false)) {
                   Navigator.of(
                     context,
                   ).pushNamedAndRemoveUntil(notesRoutes, (route) => false);
@@ -73,26 +72,17 @@ class _LoginViewState extends State<LoginView> {
                   ).pushNamedAndRemoveUntil(verifyEmailRoute, (route) => false);
                   return;
                 }
-
-                log("User login: ${userCredential.user}");
-              } on FirebaseAuthException catch (e) {
-                log("Error: $e");
-                log(e.code);
-                if (e.code == "invalid-credential") {
-                  log("Invalid credentials", name: "login");
-                  await showErrorDialog(
-                    context,
-                    "Email or password is incorrect",
-                  );
-                } else if (e.code == "user-disabled") {
-                  log("User disabled", name: "login");
-                  await showErrorDialog(context, e.message.toString());
-                } else {
-                  await showErrorDialog(context, "Error: ${e.code}");
-                }
-              } catch (e) {
-                log("Error: $e");
-                await showErrorDialog(context, e.toString());
+              } on InvalidCredentialsAuthException {
+                await showErrorDialog(
+                  context,
+                  "Email or password is incorrect",
+                );
+              } on InvalidEmailAuthException {
+                await showErrorDialog(context, "Email is invalid");
+              } on UserDisabledAuthException {
+                await showErrorDialog(context, "This user has been disabled.");
+              } on GenericAuthException {
+                await showErrorDialog(context, "Authentication error");
               }
             },
             child: const Text("Login"),
