@@ -3,6 +3,7 @@ import 'dart:developer' show log;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:privatenotes/constant/route.dart';
+import 'package:privatenotes/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -70,9 +71,19 @@ class _LoginViewState extends State<LoginView> {
                 log(e.code);
                 if (e.code == "invalid-credential") {
                   log("Invalid credentials", name: "login");
+                  await showErrorDialog(
+                    context,
+                    "Email or password is incorrect",
+                  );
+                } else if (e.code == "user-disabled") {
+                  log("User disabled", name: "login");
+                  await showErrorDialog(context, e.message.toString());
                 } else {
-                  log("Something went wrong");
+                  await showErrorDialog(context, "Error: ${e.code}");
                 }
+              } catch (e) {
+                log("Error: $e");
+                await showErrorDialog(context, e.toString());
               }
             },
             child: const Text("Login"),
