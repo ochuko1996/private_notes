@@ -5,6 +5,7 @@ import 'package:privatenotes/services/cloud/cloud_storage_exceptions.dart';
 
 class FirebaseCloudStorage {
   final notes = FirebaseFirestore.instance.collection(notesCollection);
+  // Live data of notes
   Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) =>
       notes.snapshots().map(
         (event) => event.docs
