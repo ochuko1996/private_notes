@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:privatenotes/constant/route.dart';
 import 'package:privatenotes/services/auth/auth_exceptions.dart';
 import 'package:privatenotes/services/auth/bloc/auth_bloc.dart';
 import 'package:privatenotes/services/auth/bloc/auth_event.dart';
+import 'package:privatenotes/services/auth/bloc/auth_state.dart';
 import 'package:privatenotes/utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -51,28 +54,34 @@ class _LoginViewState extends State<LoginView> {
             decoration: const InputDecoration(hintText: "Password"),
             controller: _password,
           ),
-          TextButton(
-            onPressed: () async {
-              // Registration logic goes here
-              final email = _email.text;
-              final password = _password.text;
-
-              try {
-                context.read<AuthBloc>().add(AuthEventLogIn(email, password));
-              } on InvalidCredentialsAuthException {
-                await showErrorDialog(
-                  context,
-                  "Email or password is incorrect",
-                );
-              } on InvalidEmailAuthException {
-                await showErrorDialog(context, "Email is invalid");
-              } on UserDisabledAuthException {
-                await showErrorDialog(context, "This user has been disabled.");
-              } on GenericAuthException {
-                await showErrorDialog(context, "Authentication error");
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthStateLoggedOut) {
+                final exception = state.exception;
+                log("exception log: $exception");
+                if (exception is InvalidCredentialsAuthException) {
+                  showErrorDialog(context, "Email or password is incorrect");
+                } else if (exception is InvalidEmailAuthException) {
+                  showErrorDialog(context, "Email is invalid");
+                } else if (exception is UserDisabledAuthException) {
+                  showErrorDialog(context, "This user has been disabled.");
+                } else if (exception is NetworkRequestFailed) {
+                  showErrorDialog(context, "Bad Newtwork, Try Again Later");
+                } else if (exception is GenericAuthException) {
+                  showErrorDialog(context, "Authentication error");
+                }
               }
             },
-            child: const Text("Login"),
+            child: TextButton(
+              onPressed: () async {
+                // Registration logic goes here
+                final email = _email.text;
+                final password = _password.text;
+
+                context.read<AuthBloc>().add(AuthEventLogIn(email, password));
+              },
+              child: const Text("Login"),
+            ),
           ),
           TextButton(
             onPressed: () {

@@ -55,7 +55,7 @@ class FirebaseAuthProvider implements CustomAuthProvider {
     required String password,
   }) async {
     try {
-      FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -66,10 +66,12 @@ class FirebaseAuthProvider implements CustomAuthProvider {
         throw UserNotLoggedInAuthException();
       }
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalidCredential') {
+      if (e.code == 'invalid-credential') {
         throw InvalidCredentialsAuthException();
       } else if (e.code == 'user-disabled') {
         throw UserDisabledAuthException();
+      } else if (e.code == "network-request-failed") {
+        throw NetworkRequestFailed();
       } else {
         throw GenericAuthException();
       }
