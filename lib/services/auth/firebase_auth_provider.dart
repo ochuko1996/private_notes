@@ -66,14 +66,19 @@ class FirebaseAuthProvider implements CustomAuthProvider {
         throw UserNotLoggedInAuthException();
       }
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-credential') {
-        throw InvalidCredentialsAuthException();
-      } else if (e.code == 'user-disabled') {
-        throw UserDisabledAuthException();
-      } else if (e.code == "network-request-failed") {
-        throw NetworkRequestFailed();
-      } else {
-        throw GenericAuthException();
+      switch (e.code) {
+        case 'user-not-found':
+          throw UserNotFoundAuthException();
+        case "invalid-credential":
+          throw InvalidCredentialsAuthException();
+        case 'invalid-email':
+          throw InvalidEmailAuthException();
+        case 'user-disabled':
+          throw UserDisabledAuthException();
+        case "network-request-failed":
+          throw NetworkRequestFailed();
+        default:
+          throw GenericAuthException();
       }
     } catch (e) {
       throw GenericAuthException();
@@ -105,5 +110,26 @@ class FirebaseAuthProvider implements CustomAuthProvider {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+  }
+
+  @override
+  Future<void> sendPasswordReset({required String toEmail}) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: toEmail);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        throw UserNotFoundAuthException();
+      } else if (e.code == 'invalid-credential') {
+        throw InvalidCredentialsAuthException();
+      } else if (e.code == 'invalid-email') {
+        throw InvalidEmailAuthException();
+      } else if (e.code == "network-request-failed") {
+        throw NetworkRequestFailed();
+      } else {
+        throw GenericAuthException();
+      }
+    } catch (e) {
+      throw GenericAuthException();
+    }
   }
 }

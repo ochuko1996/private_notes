@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:privatenotes/helpers/loading/loading_screen_controller.dart';
 
@@ -17,11 +15,9 @@ class LoadingScreen {
   }
 
   void show({required BuildContext context, required String text}) {
-    log('Loading Screen: $text');
     if (controller?.update(text) ?? false) {
       return;
     } else {
-      log('Creating new loading screen');
       controller = showOverlay(context: context, text: text);
     }
   }

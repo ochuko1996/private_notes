@@ -52,39 +52,57 @@ class _LoginViewState extends State<LoginView> {
       },
       child: Scaffold(
         appBar: AppBar(title: const Text("Login")),
-        body: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(hintText: "Email"),
-              controller: _email,
-              autocorrect: false,
-              enableSuggestions: false,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            TextField(
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: "Password"),
-              controller: _password,
-            ),
-            TextButton(
-              onPressed: () async {
-                // Registration logic goes here
-                final email = _email.text;
-                final password = _password.text;
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                "Please log in to your account in order to interact with and create notes.",
+              ),
+              TextField(
+                decoration: const InputDecoration(hintText: "Email"),
+                controller: _email,
+                autocorrect: false,
+                enableSuggestions: false,
+                keyboardType: TextInputType.emailAddress,
+                autofocus: true,
+              ),
+              TextField(
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: const InputDecoration(hintText: "Password"),
+                controller: _password,
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  // Registration logic goes here
+                  final email = _email.text;
+                  final password = _password.text;
 
-                context.read<AuthBloc>().add(AuthEventLogIn(email, password));
-              },
-              child: const Text("Login"),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(const AuthEventShouldRegister());
-              },
-              child: const Text("Not registered yet? Register here"),
-            ),
-          ],
+                  context.read<AuthBloc>().add(AuthEventLogIn(email, password));
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                ),
+                child: const Text("Login"),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventForgotPassword());
+                },
+                child: const Text("I forgot my password"),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventShouldRegister());
+                },
+                child: const Text("Not registered yet? Register here"),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -31,6 +31,7 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 90, 199, 199),
         title: const Text(
           "Your Notes",
           style: TextStyle(color: Color(0xFFFFFFFF)),
@@ -64,7 +65,6 @@ class _NotesViewState extends State<NotesView> {
             },
           ),
         ],
-        backgroundColor: Color.fromARGB(255, 90, 199, 199),
       ),
       body: StreamBuilder(
         stream: _notesService.allNotes(ownerUserId: userId),
